@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<title>星云拍卖行</title>
+	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="../css/core.css">
+</head>
+<body>
+	<nav class="navbar navbar-inverse" id="nav" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-menu" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/index.html">
+                    Nebulas House Contract
+                </a>
+            </div>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar-menu">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/index.html#form">Create Contract</a></li>
+                <li><a href="/index.html#search">Accept</a></li>
+                <li><a href="/view/myaccount.html">Personal</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+	<div class="jumbotron" id="banner">
+    <div class="container">
+        <img src=""/>
+    </div>
+</div>
+	<div class="container" id="app">
+	    <div class="row">
+		  <div class="col-xs-9 col-md-9">
+		  	<div v-for="p in products">
+			<div class="panel panel-default product-box">
+			  <div class="panel-body">
+			    <div class="row">
+				  <div class="col-xs-7 col-md-5">
+				    <a class="thumbnail">
+				      <img v-bind:src="p.imgUrl" v-bind:title="p.title">
+				    </a>
+				  </div>
+				  <div class="col-xs-4 col-md-6 caption">
+					<h3>{{p.title}}</h3>
+			        <p>当前价：<span class="price">{{p.nowPrice}}</span> NPC &nbsp;&nbsp;&nbsp;<span v-html="getRestTimeDisplay(p.endTime, p.winner,p.status)"></span></p>
+			        <p><button v-if="getRestTime(p.endTime) > 0" class="btn btn-primary" role="button" data-toggle="modal" data-target="#priceModal" v-bind:data-whatever="p.id">出价</button> <button class="btn btn-default" role="button" data-toggle="modal" v-bind:data-target="'#priceRecord'+p.id">查看出价记录</button></p>
+			  	  </div>
+				</div>
+			  </div>
+	          <div class="times">{{p.times}} <br/>次出价</div>
+			</div>
+			<div class="modal fade" v-bind:id="'priceRecord'+p.id" tabindex="-1" role="dialog">
+			  <div class="modal-dialog" role="document">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        <h4 class="modal-title">最近的出价记录</h4>
+			      </div>
+			      <div class="modal-body">
+					<ul class="list-group news-list">
+					  <li class="list-group-item" v-for="log in p.offers">{{addrDisplay(log.addr)}} 参与拍卖,出价 {{log.price}} NPC</li>
+					</ul>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+			</div>
+
+	      </div>
+
+		  <div class="col-xs-3 col-md-3">
+		  	<div class="panel panel-default news-panel">
+			  <div class="panel-heading">最新动态</div>
+			  <div class="panel-body">
+				<ul class="list-group news-list">
+				  <li class="list-group-item" v-for="n in news">{{addrDisplay(n.addr)}} 参与拍卖</li>
+				</ul>
+			  </div>
+			</div>
+		  </div>
+		</div>
+
+
+	</div>
+
+
+
+	<div class="modal fade" id="priceModal" tabindex="-1" role="dialog" aria-labelledby="priceModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="priceModalLabel">出价</h4>
+				</div>
+				<div class="modal-body">
+					<label for="dealPrice" class="control-label">价格(NPC):</label>
+					<input type="number" class="form-control" id="dealPrice">
+					<input type="hidden" id="offerProductId">
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary" onclick="offer()">提交</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="../js/plugins/jquery-3.3.1.min.js"></script>
+	<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<script src="../js/plugins/vue.min.js"></script>
+	<script type="text/javascript" src="../js/plugins/nebulas.js"></script>
+	<script type="text/javascript" src="../js/plugins/nebPay.js"></script>
+	<script type="text/javascript" src="../js/common/util.js"></script>
+	<script type="text/javascript" src="../js/common/common-neb.js"></script>
+	<script type="text/javascript" src="../js/common/common-data.js"></script>
+	<script type="text/javascript" src="../js/index.js"></script>
+	<script type="text/javascript">
+		//出价modal
+		$('#priceModal').on('show.bs.modal', function (event) {
+		  var button = $(event.relatedTarget);
+		  var recipient = button.data('whatever');
+		  var modal = $(this);
+		  modal.find("#offerProductId").val(recipient)
+		});
+
+		function offer() {
+            var id = $("#offerProductId").val();
+            var price = $("#dealPrice").val();
+            if (id && price){
+                offerNPC(self, id, price);
+            }else (
+                alert("不能为空")
+            )
+        }
+
+		new Vue({
+		    el: '#app',
+		    data: {
+//		    	products:[{title:"顾景舟第三代传人 助理工艺美术师顾华君 宜兴",imgUrl:"https://img.alicdn.com/bao/uploaded/img.alicdn.com/bao/uploaded/https://gw.alicdn.com/tfs/TB1b.pquQyWBuNjy0FpXXassXXa-520-220.jpg_600x600Q90.jpg",nowPrice:1,endTime:new Date("2018-06-04"),productId:1,times:8,logs:[{addr:"n1Y6uyg19PHwYFEJrg8xaf1JK8pZtZ5TDqW",price:0.05,time:new Date("2018-06-04"),getCoinNum:50}]}]
+                products: [],
+				news: [],
+		    },
+            methods: {
+			},
+            mounted : function () {
+                var self = this;
+                getUserInfo(self);
+                getAllNPCProducts(self);
+                getNPCNewsLogs(self);
+            }
+		})
+	</script>
+</body>
+</html>

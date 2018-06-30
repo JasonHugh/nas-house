@@ -1,0 +1,21 @@
+{
+  "name": "rent-house",
+  "version": "1.0.0",
+  "description": "租房合约",
+  "scripts": {
+    "test": "echo\"ERROR:no test specified\"&&exit 1"
+  },
+  "author": "",
+  "licence": "ISC",
+  "dependencies": {
+    "cnpm": "^5.1.1"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.18.13",
+    "gulp": "^3.9.1",
+    "gulp-file-include": "^1.2.0",
+    "gulp-clean-css": "",
+    "gulp-sass": "^3.1.0",
+    "gulp-uglify": "^3.0.0"
+  }
+}

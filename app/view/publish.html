@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>星云拍卖行</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" href="http://i.gtimg.cn/vipstyle/frozenui/2.0.0/css/frozen.css">
+    <link rel="stylesheet" type="text/css" href="../css/core.css">
+    <style>
+        .panel-heading h2{font-weight: bold;}
+        .panel-body p{font-size: 15px;line-height: 30px;word-wrap: break-word;}
+        .nav-pills li{cursor: pointer}
+        .row{position: relative}
+        #error_box{margin-top: 30px;display: none}
+        #submit{display: block;margin:20px auto;width:200px}
+        .radio{text-align: center;}
+        #app{padding: 0}
+    </style>
+</head>
+<body>
+    @@include('public/header.html')
+    @@include('public/banner.html')
+    <div class="container" id="app">
+        <div class="ui-form ui-border-t">
+            <form action="">
+                <div class="ui-form-item ui-border-b">
+                    <label>
+                        Contract Title
+                    </label>
+                    <input type="text" placeholder="Contract Title">
+                </div>
+                <div class="ui-form-item ui-border-b">
+                    <label>
+                        Your Name
+                    </label>
+                    <input type="text" placeholder="Enter your true name">
+                </div>
+                <div class="ui-form-item ui-border-b">
+                    <label>
+                        Price
+                    </label>
+                    <input type="text" placeholder="Enter month price">
+                </div>
+                <div class="ui-form-item ui-border-b">
+                    <label>
+                        Deposit
+                    </label>
+                    <input type="text" placeholder="Enter the deposit">
+                </div>
+                <div class="ui-form-item ui-border-b">
+                    <label>Start Date</label>
+                    <div class="ui-select-group">
+                        <div class="ui-select">
+                            <select>
+                                <option>2014</option>
+                                <option selected="">2015</option>
+                                <option>2016</option>
+                            </select>
+                        </div>
+                        <div class="ui-select">
+                            <select>
+                                <option>03</option>
+                                <option selected="">04</option>
+                                <option>05</option>
+                            </select>
+                        </div>
+                        <div class="ui-select">
+                            <select>
+                                <option>21</option>
+                                <option selected="">22</option>
+                                <option>23</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="../js/plugins/jquery-3.3.1.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="../js/plugins/bootstrap-datetimepicker.min.js"></script>
+    <script src="../js/plugins/vue.min.js"></script>
+    <script type="text/javascript" src="../js/plugins/nebulas.js"></script>
+    <script type="text/javascript" src="../js/plugins/nebPay.js"></script>
+    <script type="text/javascript" src="../js/common/util.js"></script>
+    <script type="text/javascript" src="../js/common/common-neb.js"></script>
+	<script type="text/javascript" src="../js/common/common-data.js"></script>
+    <script type="text/javascript">
+
+        $(function() {
+            getUserInfo();
+            $('#endTime').datetimepicker({
+                  startDate: new Date(new Date().getTime()+3600000),
+                  format: 'yyyy-mm-dd hh:00:00',
+                  autoclose: true,
+                  minView: 1
+              });
+        })
+        function productSubmit() {
+            console.log(curAddr);
+            if (curAddr != dappAddr){
+                alert("当前只支持管理员添加拍品");
+                return;
+            }
+            var title = $("#title").val();
+            var initPrice = $("#initPrice").val();
+            var imgUrl = $("#image").val();
+            var endTime = $("#endTime").val();
+            var ptype = $(".radio input:checked").val();
+            if (title && initPrice && endTime && ptype){
+                var data = {title:title,initPrice:initPrice,endTime:Math.floor(new Date(endTime).getTime()/1000),ptype:ptype,imgUrl:imgUrl};
+                addProduct(data);
+            }else {
+                $('#error_box').slideDown();
+                setTimeout(function() {
+                    $('#error_box').slideUp()
+                },1000)
+            }
+        }
+    </script>
+</body>
+</html>

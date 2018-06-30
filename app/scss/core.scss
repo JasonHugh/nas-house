@@ -1,0 +1,17 @@
+a{cursor: pointer}
+.product-box .panel-body{padding: 0;height:186px;}
+.thumbnail{margin-bottom: 0;padding: 0;}
+.thumbnail img{height:186px;}
+.navbar{margin-bottom: 0}
+ul.news-list .list-group-item{border: none;overflow: hidden;word-wrap: break-word;}
+.news-panel .panel-body{padding: 0}
+.price{font-size: 20px;color: #ff3333}
+.product-box{position: relative;}
+.product-box .times{top: 0;right: 0;width: 70px;background: #731800;color: #fff;position: absolute;z-index: 1;text-align: center;padding: 20px 0}
+.product-box .caption h3{height: 50px;overflow: hidden;}
+
+#banner{background: url("../images/banner.png") center no-repeat;background-size: auto 100%;background-color: #0c0022;height: 200px;padding:0;margin:0;text-align: center}
+#banner img{margin:20px auto;}
+.ui-form-item input{width:60%}
+.ui-form-item label{font-weight: normal;width:110px}
+.ui-form-item .ui-select-group{margin:0;width:60%}

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<title>Nebulas House Contract</title>
+	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="./css/bootstrap-datetimepicker.min.css">
+	<link rel="stylesheet" type="text/css" href="./css/core.css">
+	<style>
+	.page1{
+        background: #2e3842;
+	}
+	.page1 .jumbotron{
+	background: transparent;
+	color: #ddd;
+	text-align: center;
+	}
+	.page1 .jumbotron h1{
+	text-align: center;
+	}
+	.page1 .jumbotron p{
+	color: #aaa;
+	font-size: 14px;
+	}
+	.page1 .btn2{
+	margin-left:10px
+	}
+	.form-control{
+	with:100%;
+	border-radius: 0;
+	height:50px;
+	border:none;
+	background: transparent;
+	}
+	.page2{
+	background: #fff;
+	}
+	.row{
+	padding: 20px 0;
+	}
+	.col-xs-12,.page2 .col-md-12{
+	padding: 0;
+	}
+	#submit{
+	    position: relative;
+        margin:20px auto;
+        left:50%;
+        margin-left: -75px;
+        width:150px;
+        height:40px;
+        line-height: 20px;
+        border-radius: 20px;
+	}
+	#error_box{display: none}
+	.page3{
+	background-color: #218838;
+	}
+	.page3 .form-control{
+	color: #fff;
+	border:1px solid #f4f6f6;
+	}
+	.page3 .search{
+	height:50px;
+	width: 80px;
+	border-radius: 0;
+	border:none
+	}
+	.page3 .panel{
+	margin-top:30px;
+	border-radius: 0;
+	text-wrap: normal;
+	}
+	.page3 .panel-body{word-break: break-all}
+	.page3 h2{color:#fff}
+	.page3 .accept{margin-top:10px}
+    </style>
+</head>
+<body>
+	@@include('view/public/header.html')
+	<div class="container page page1">
+        <div class="jumbotron">
+          <h1>Nebulas House Contract</h1>
+          <p>Nebulas House Contract is using to help house owner to manage rent house and get the rent fee.</p>
+          <a class="btn btn-primary btn-lg" href="#form" role="button">house owner</a>
+          <a class="btn btn-primary btn-lg btn2" href="#search" role="button">customer</a>
+        </div>
+	</div>
+    <a name="form"></a>
+	<div class="container page page2">
+	    <h2>Create Contract</h2>
+        <div class="row">
+            <div class="col-xs-12 col-md-12">
+                  <input type="text" class="form-control" id="title" placeholder="Enter title of the new contract">
+                  <input type="text" class="form-control" id="creatorName" placeholder="Enter your ture name">
+                  <input type="number" class="form-control" id="price" placeholder="Enter the price of per month">
+                  <input type="number" class="form-control" id="deposit" placeholder="Enter the deposit of the house">
+                  <input type="text" class="form-control" value="" id="startTime" placeholder="Enter the first pay date">
+                  <input type="text" class="form-control" value="" id="endTime" placeholder="Enter the last pay date">
+
+                <div style="position: relative"><button type="button" id="submit" class="btn btn-primary btn-small" onclick="createAgree()">Create</button></div>
+                <div class="alert alert-danger" id="error_box" role="alert">All input can not empty</div>
+            </div>
+        </div>
+	</div>
+    <a name="search"></a>
+	<div class="container page page3" id="page3">
+	    <h2>Search Contract</h2>
+        <div class="row">
+            <div class="col-xs-12 col-md-12">
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Enter contract ID" id="agreeId" value="">
+                    <span class="input-group-btn">
+                      <button class="btn btn-default search" type="button" v-on:click="search()">Go!</button>
+                    </span>
+                  </div>
+                  <div class="panel panel-default" v-if="agree.id">
+                    <div class="panel-heading">Contract Detail</div>
+                    <div class="panel-body">
+                      <p>Contract ID: {{agree.id}}<br/>
+                      Contract Title: {{agree.title}}<br/>
+                      House Owner: {{agree.creatorName}} ({{agree.creator}})<br/>
+                      Customer: {{agree.customerName}} ({{agree.customer}})<br/>
+                      House price: {{agree.price}}<br/>
+                      House Deposit: {{agree.deposit}}<br/>
+                      House Start Date: {{agree.startDate}}<br/>
+                      House End Date: {{agree.endDate}}<br/>
+                      </p>
+                    <input type="text" class="form-control" style="color:#000" id="customerName" placeholder="Enter your ture name">
+                      <button class="btn btn-primary accept" type="button" v-on:click="accept()">Accept</button>
+                    </div>
+                  </div>
+            </div>
+        </div>
+	</div>
+
+	<script src="./js/plugins/jquery-3.3.1.min.js"></script>
+	<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="./js/plugins/bootstrap-datetimepicker.min.js"></script>
+	<script src="./js/plugins/vue.min.js"></script>
+	<script type="text/javascript" src="./js/plugins/nebulas.js"></script>
+	<script type="text/javascript" src="./js/plugins/nebPay.js"></script>
+	<script type="text/javascript" src="./js/common/util.js"></script>
+	<script type="text/javascript" src="./js/common/common-neb.js"></script>
+	<script type="text/javascript" src="./js/common/common-data.js"></script>
+	<script type="text/javascript">
+		$(function() {
+		    var height = $(window).height();
+		  $(".page").height(height);
+		  $(".page1").height(height-50);
+		  $(".jumbotron").css("margin-top",$(window).height()/2 - 100);
+		});
+		function createAgree() {
+            var title = $("#title").val();
+            var creatorName = $("#creatorName").val();
+            var price = $("#price").val();
+            var deposit = $("#deposit").val();
+            var startTime = $("#startTime").val();
+            var endTime = $("#endTime").val();
+            if (title && creatorName && price && deposit && startTime && endTime){
+                var data = {title:title,creatorName:creatorName,price:price,deposit:deposit,startDate:Math.floor(new Date(startTime).getTime()/1000),endDate:Math.floor(new Date(endTime).getTime()/1000)};
+                createHouseAgree(data);
+            }else {
+                $('#error_box').slideDown();
+                setTimeout(function() {
+                    $('#error_box').slideUp()
+                },1000)
+            }
+		}
+
+        $('#startTime').datetimepicker({
+              startDate: new Date(new Date().getTime()+3600000),
+              format: 'yyyy-mm-dd',
+              autoclose: true,
+              minView: 2
+          });
+
+        $('#endTime').datetimepicker({
+              startDate: new Date(new Date().getTime()+3600000),
+              format: 'yyyy-mm-dd',
+              autoclose: true,
+              minView: 2
+          });
+        new Vue({
+            el: '#page3',
+            data: {
+                agree: {}
+            },
+            methods: {
+                search : function() {
+                    var self = this;
+                    var id = $("#agreeId").val();
+                    if (id){
+                        searchAgree(self, id);
+                    }
+                },
+                accept: function() {
+                  var id = this.agree.id;
+                  var customerName = $("#customerName").val();
+                    if (id && customerName){
+                        accept(self, id, customerName);
+                    }
+                }
+            },
+            mounted : function () {
+            }
+        })
+	</script>
+</body>
+</html>

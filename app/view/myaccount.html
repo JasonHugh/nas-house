@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<title>Nebulas House Contract</title>
+	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap-datetimepicker.min.css">
+	<link rel="stylesheet" type="text/css" href="../css/core.css">
+	<style>
+	.page1{
+        background: #2e3842;
+	}
+	.page1 .jumbotron{
+	background: transparent;
+	color: #ddd;
+	text-align: center;
+	}
+	.page1 .jumbotron h1{
+	text-align: center;
+	}
+	.page1 .jumbotron p{
+	color: #aaa;
+	font-size: 14px;
+	}
+	.page1 .btn2{
+	margin-left:10px
+	}
+	.form-control{
+	with:100%;
+	border-radius: 0;
+	height:50px;
+	background: transparent;
+	}
+	.page3 .search{
+	height:50px;
+	width: 80px;
+	border-radius: 0;
+
+	}
+	.page3 .panel{
+	margin-top:30px;
+	border-radius: 0;
+	text-wrap: normal;
+	}
+	.page3 .panel-body{word-break: break-all}
+	.page3 h2{color:#fff}
+	.page3 .accept{margin-top:10px}
+    </style>
+</head>
+<body>
+	@@include('../view/public/header.html')
+	<div class="container page page3" id="page3">
+	    <h2>Search Contract</h2>
+        <div class="row">
+            <div class="col-xs-12 col-md-12">
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Enter your address" id="addr" value="">
+                    <span class="input-group-btn">
+                      <button class="btn btn-default search" type="button" v-on:click="search()">Go!</button>
+                    </span>
+                  </div>
+                  <div class="panel panel-default" v-if="account.addr">
+                    <div class="panel-heading">Account Info</div>
+                    <div class="panel-body">
+                      <p>Address: {{account.addr}}<br/>
+                      Balance: {{account.balance}}<br/>
+                      Warning: {{account.warnings}}
+                      </p>
+                    <input type="text" class="form-control" style="color:#000" id="price" placeholder="Enter your withdraw number (nas)">
+                      <button class="btn btn-primary accept" type="button" v-on:click="withDraw()">Withdraw</button>
+                    </div>
+                  </div>
+                  <div class="panel panel-default" v-if="pubAgrees.length > 0" v-for="agree in pubAgrees">
+                    <div class="panel-heading">Publish Contracts</div>
+                    <div class="panel-body">
+                      <p>Contract ID: {{agree.id}}<br/>
+                      Contract Title: {{agree.title}}<br/>
+                      House Owner: {{agree.creatorName}} ({{agree.creator}})<br/>
+                      Customer: {{agree.customerName}} ({{agree.customer}})<br/>
+                      House price: {{agree.price}}<br/>
+                      House Deposit: {{agree.deposit}}<br/>
+                      House Start Date: {{agree.startDate}}<br/>
+                      House End Date: {{agree.endDate}}<br/>
+                      Pay Logs: {{agree.payLogs}}<br/>
+                      </p>
+                      <button class="btn btn-primary accept" type="button" v-on:click="warn(agree.id)">Warn Customer</button>
+                    </div>
+                  </div>
+                  <div class="panel panel-default" v-if="acceptAgrees.length > 0" v-for="agree in acceptAgrees">
+                      <div class="panel-heading">Accept Contracts</div>
+                      <div class="panel-body">
+                        <p>Contract ID: {{agree.id}}<br/>
+                        Contract Title: {{agree.title}}<br/>
+                        House Owner: {{agree.creatorName}} ({{agree.creator}})<br/>
+                        Customer: {{agree.customerName}} ({{agree.customer}})<br/>
+                        House price: {{agree.price}}<br/>
+                        House Deposit: {{agree.deposit}}<br/>
+                        House Start Date: {{agree.startDate}}<br/>
+                        House End Date: {{agree.endDate}}<br/>
+                        Pay Logs: {{agree.payLogs}}<br/>
+                        </p>
+                        <button class="btn btn-primary accept" type="button" v-on:click="give(agree.id)">Pay Month Money</button>
+                      </div>
+                    </div>
+            </div>
+        </div>
+	</div>
+
+	<script src="../js/plugins/jquery-3.3.1.min.js"></script>
+	<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="../js/plugins/bootstrap-datetimepicker.min.js"></script>
+	<script src="../js/plugins/vue.min.js"></script>
+	<script type="text/javascript" src="../js/plugins/nebulas.js"></script>
+	<script type="text/javascript" src="../js/plugins/nebPay.js"></script>
+	<script type="text/javascript" src="../js/common/util.js"></script>
+	<script type="text/javascript" src="../js/common/common-neb.js"></script>
+	<script type="text/javascript" src="../js/common/common-data.js"></script>
+	<script type="text/javascript">
+		$(function() {
+		    var height = $(window).height();
+		  $(".page").height(height);
+		  $(".page1").height(height-50);
+		  $(".jumbotron").css("margin-top",$(window).height()/2 - 100);
+		});
+
+        new Vue({
+            el: '#page3',
+            data: {
+                pubAgrees: [],
+                acceptAgrees: [],
+                account:{}
+            },
+            methods: {
+                search : function() {
+                    var self = this;
+                    var addr = $("#addr").val();
+                    if (addr){
+                        getPersonalData(self, addr);
+                        getPubAgree(self, addr);
+                        getAcceptAgree(self, addr);
+                    }
+                },
+                warn: function(id) {
+                    if (id){
+                        warn(self, id);
+                    }
+                },
+                give : function(id) {
+                    if (id){
+                        give(self, id);
+                    }
+                },
+                 withDraw : function() {
+                    var price = $("#price").val();
+                     if (price){
+                         withDraw(self, price);
+                     }
+                 }
+            },
+            mounted : function () {
+            }
+        })
+	</script>
+</body>
+</html>
